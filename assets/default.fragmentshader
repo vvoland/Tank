@@ -1,0 +1,98 @@
+#version 330
+
+in vec4 vs_out_Color;
+in vec2 vs_out_UV;
+in vec3 vs_out_Normal;
+in vec3 vs_out_FragPos;
+in vec3 vs_out_ViewPos;
+
+uniform sampler2D in_Texture;
+
+#define MAX_LIGHTS 4
+
+#define LIGHT_DIRECTIONAL 0
+#define LIGHT_POINT 1
+#define LIGHT_REFLECTOR 2
+
+struct Light
+{
+    vec3 Position;
+    vec3 Color;
+    int Type;
+    float Range;
+    vec3 ReflectorDirection;
+};
+
+uniform vec3 in_AmbientColor;
+uniform Light in_Light[MAX_LIGHTS];
+uniform int in_LightCount;
+uniform mat4 in_View;
+
+out vec4 out_Color;
+
+const float Gamma = 2.2;
+
+vec3 toGamma(vec3 color)
+{
+    return pow(color, vec3(1.0/Gamma));
+}
+
+vec3 toLinear(vec3 color)
+{
+    return pow(color, vec3(Gamma));
+}
+
+void main()
+{
+    vec4 texColor = texture2D(in_Texture, vs_out_UV);
+    vec3 color = vs_out_Color.rgb * toLinear(texColor.rgb);
+    float alpha = texColor.a * vs_out_Color.a;
+
+    vec3 lightColor = vec3(0, 0, 0);
+    vec3 normal = normalize(vs_out_Normal);
+    vec3 viewPos = vs_out_ViewPos;
+    vec3 viewDir = normalize(viewPos - vs_out_FragPos);
+    float specularPower = 0.0f;
+
+    for(int i = 0; i < in_LightCount; i++)
+    {
+        vec3 lightVec = in_Light[i].Position - vs_out_FragPos;
+        int type = in_Light[i].Type;
+        vec3 lightDir = normalize(lightVec);
+        float lambertian = max(dot(normal, lightDir), 0.0);
+
+        // Blinn Phong
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0f);
+
+        if(type == LIGHT_DIRECTIONAL)
+        {
+            lightColor += in_Light[i].Color * lambertian;
+        }
+        else if(type == LIGHT_POINT)
+        {
+            float dist = length(lightVec);
+            float power = 1.0 - min(1, dist / in_Light[i].Range);
+
+            lightColor += in_Light[i].Color * lambertian * power;
+        }
+        else if(type == LIGHT_REFLECTOR)
+        {
+            float theta = dot(lightDir, normalize(-in_Light[i].ReflectorDirection));
+            if(theta > cos(in_Light[i].Range))
+            {
+                lightColor += in_Light[i].Color * theta;
+            }
+        }
+
+        specularPower += spec;
+    }
+
+    vec3 ambient = in_AmbientColor * color * 0.1;
+    vec3 diffuse = color - ambient;
+    vec3 specularColor = vec3(1, 1, 1) * 0.1;
+    vec3 specular = specularColor * specularPower;
+
+    vec3 finalColor = toGamma(ambient) + toGamma(diffuse + specular) * lightColor;
+    out_Color = vec4(finalColor, alpha);
+}

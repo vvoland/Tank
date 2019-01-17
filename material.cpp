@@ -26,6 +26,7 @@ void Material::bind() const
     }
     mProgram->setUniform("in_Color", Color);
     mProgram->setUniform("in_AmbientColor", AmbientColor);
+    mProgram->setUniform("in_UvSpeed", UvSpeed);
 }
 
 void Material::setMVP(const Mvp& mvp)
@@ -95,4 +96,9 @@ void Material::setLights(const std::vector<std::shared_ptr<Light>>& lights)
 glm::vec3& Material::ambient()
 {
     return AmbientColor;
+}
+
+float& Material::uvSpeed()
+{
+    return UvSpeed;
 }

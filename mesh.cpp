@@ -18,6 +18,7 @@ Mesh::Mesh(Mesh&& other) noexcept
     Vertices = std::move(other.Vertices);
     Normals = std::move(other.Normals);
     Uvs = std::move(other.Uvs);
+    Indices = std::move(other.Indices);
 }
 
 Mesh& Mesh::operator=(Mesh&& other) noexcept
@@ -25,6 +26,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept
     std::swap(Vertices, other.Vertices);
     std::swap(Normals, other.Normals);
     std::swap(Uvs, other.Uvs);
+    std::swap(Indices, other.Indices);
     return *this;
 }
 
@@ -45,7 +47,7 @@ static glm::vec2 aiVec3ToGlm2(aiVector3D vec)
 void Mesh::loadFromFile(const std::string& path)
 {
     Assimp::Importer importer;
-    auto flags = aiProcess_Triangulate | aiProcess_GenNormals;
+    auto flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals;
     const aiScene *scene = importer.ReadFile(path.c_str(), flags);
 
     if (scene == nullptr)
@@ -103,7 +105,7 @@ std::unordered_map<std::string, Mesh> Mesh::loadAllFromFile(const std::string &p
 {
     std::unordered_map<std::string, Mesh> meshes;
     Assimp::Importer importer;
-    auto flags = aiProcess_Triangulate | aiProcess_GenNormals;
+    auto flags = aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_FlipUVs;
     const aiScene *scene = importer.ReadFile(path.c_str(), flags);
 
     if (scene == nullptr)
@@ -145,11 +147,11 @@ std::unordered_map<std::string, Mesh> Mesh::loadAllFromFile(const std::string &p
                            aiVec3ToGlm2);
         }
 
-        Mesh& mesh = meshes[objMesh->mName.C_Str()] = Mesh();
-        mesh.Vertices = std::move(vertices);
-        mesh.Uvs = std::move(uvs);
-        mesh.Normals = std::move(normals);
-        mesh.Indices = std::move(indices);
+        Mesh& mesh = (meshes[objMesh->mName.C_Str()] = Mesh());
+        mesh.Vertices = vertices;
+        mesh.Uvs = uvs;
+        mesh.Normals = normals;
+        mesh.Indices = indices;
     }
 
     return meshes;

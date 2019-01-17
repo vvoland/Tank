@@ -37,7 +37,7 @@ set(PROJECT_SOURCE_FILES
         "components/transform.cpp"
         "components/velocity.cpp"
         "components/camera.cpp"
-        components/light.cpp components/light.hpp)
+        components/light.cpp components/light.hpp components/tank_controller.cpp components/tank_controller.hpp components/free_camera_rotation.cpp components/free_camera_rotation.hpp components/free_camera_movement.cpp components/free_camera_movement.hpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/systems)
 set(PROJECT_SOURCE_FILES

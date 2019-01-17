@@ -24,6 +24,7 @@ class Transform : public Component
         bool isDirty() const;
         const glm::mat4& worldMatrix();
 
+        glm::vec3 transformLocalPoint(const glm::vec3& point);
         void translateLocal(const glm::vec3& translation);
         void rotateLocal(const glm::quat& rot);
         void lookAt(const glm::vec3& worldPoint);

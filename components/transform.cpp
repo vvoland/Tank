@@ -83,12 +83,17 @@ void Transform::rotateLocal(const glm::quat& rot)
     markDirty();
 }
 
-void Transform::translateLocal(const glm::vec3& translation)
+glm::vec3 Transform::transformLocalPoint(const glm::vec3& point)
 {
     glm::mat4 mat = localTransform(glm::mat4(1.0f));
-    mat = glm::translate(mat, translation);
+    mat = glm::translate(mat, point);
 
-    Position = glm::vec3(mat[3]);
+    return glm::vec3(mat[3]);
+}
+
+void Transform::translateLocal(const glm::vec3& translation)
+{
+    Position = transformLocalPoint(translation);
     markDirty();
 }
 
@@ -137,3 +142,4 @@ glm::quat Transform::worldRotation(const glm::mat4& mat) const
 
     return worldRotation;
 }
+

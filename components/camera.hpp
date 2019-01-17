@@ -9,20 +9,15 @@
 class Camera : public Component
 {
     public:
-        Camera(const InputSystem& input);
+        Camera();
 
         float& speed();
-        float& rotationSpeed();
-        glm::mat4 view() const;
-        void copyRotationFromTransform();
-
         void update(float dt);
+        glm::mat4 view() const;
     private:
-        float RotationX, RotationY;
-        float Speed, RotationSpeed;
-        const InputSystem& Input;
-
-        void applyRotation();
+        glm::quat CurrentRotation;
+        bool Initialized;
+        float Speed;
 };
 
 template<>

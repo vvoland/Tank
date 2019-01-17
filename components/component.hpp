@@ -10,6 +10,10 @@ struct Component
     bool Enabled = true;
 };
 
+template<typename T,
+        typename = std::enable_if<std::is_assignable<Component, T>::value>>
+using ComponentPtr = std::shared_ptr<T>;
+
 static constexpr int COMPONENT_INVALID_INDEX = -1;
 
 template<typename T>

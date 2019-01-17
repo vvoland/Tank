@@ -11,18 +11,21 @@ void AppAssets::load(std::string prefix)
     TankBaseTexture = std::make_shared<Texture>();
     TankTracksTexture = std::make_shared<Texture>();
 
-    TankBaseTexture->loadFromFile(prefix + "tank.png");
+    TankBaseTexture->loadFromFile(prefix + "tank.png", TextureFlags::MirroredRepeat);
     TankTracksTexture->loadFromFile(prefix + "tank_tracks.png");
 
     DefaultVs->loadFromFile(prefix + "default.vertexshader");
     DefaultFs->loadFromFile(prefix + "default.fragmentshader");
 
-    auto tankMeshes = Mesh::loadAllFromFile(prefix + "tank.obj");
+    auto tankMeshes = Mesh::loadAllFromFile(prefix + "tank2.obj");
 
-    TankBaseMesh = std::make_shared<Mesh>(std::move(tankMeshes["Body_UV.004"]));
-    TankTowerMesh = std::make_shared<Mesh>(std::move(tankMeshes["Tower_UV.001"]));
-    TankLeftTracksMesh = std::make_shared<Mesh>(std::move(tankMeshes["LeftTrack_Circle.001"]));
-    TankRightTracksMesh = std::make_shared<Mesh>(std::move(tankMeshes["RightTrack_Circle.015"]));
+    PlaneMesh = std::make_shared<Mesh>();
+    PlaneMesh->loadFromFile(prefix + "plane.obj");
+    GrassTexture = std::make_shared<Texture>();
+    GrassTexture->loadFromFile(prefix + "grass.png");
 
-    std::exit(0);
+    TankBaseMesh = std::make_shared<Mesh>(std::move(tankMeshes["MC-1_Base_UV.004"]));
+    TankTowerMesh = std::make_shared<Mesh>(std::move(tankMeshes["MC-1_Base.001_Tank_Tower"]));
+    TankLeftTracksMesh = std::make_shared<Mesh>(std::move(tankMeshes["MC-1_LeftTrack_Circle.052"]));
+    TankRightTracksMesh = std::make_shared<Mesh>(std::move(tankMeshes["MC-1_RightTrack_Circle.052"]));
 }

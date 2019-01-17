@@ -7,6 +7,7 @@
 enum class TextureFlags
 {
     Default = 0,
+    MirroredRepeat
 };
 
 class Texture
@@ -19,8 +20,8 @@ class Texture
         Texture& operator=(Texture&& other) noexcept;
         ~Texture();
 
-        void loadFromFile(const std::string& path);
-        void loadFromMemory(unsigned char* data, int width, int height, int channels = 3, TextureFlags flags = TextureFlags::Default);
+        void loadFromFile(const std::string& path, TextureFlags flags = TextureFlags::Default);
+        void loadFromMemory(unsigned char* data, int width, int height, TextureFlags flags = TextureFlags::Default, int channels = 3);
         void bind(int index = 0) const;
 
     private:

@@ -8,6 +8,7 @@ uniform mat4 in_View;
 uniform mat4 in_Projection;
 uniform mat4 in_Mvp;
 uniform vec4 in_Color;
+uniform float in_UvSpeed;
 
 out vec4 vs_out_Color;
 out vec2 vs_out_UV;
@@ -20,8 +21,10 @@ void main()
     vec4 pos = vec4(in_Position, 1.0);
     gl_Position = in_Projection * in_View * in_Model * pos;
     vs_out_Color = in_Color;
-    vs_out_UV = in_UV;
-    vs_out_Normal = in_Normal;
+    vec2 uv = in_UV;
+    uv.y += in_UvSpeed;
+    vs_out_UV = uv;
+    vs_out_Normal = mat3(transpose(inverse(in_Model))) * in_Normal;
     vs_out_FragPos = (in_Model * pos).xyz;
     vs_out_ViewPos = (inverse(in_View) * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 }

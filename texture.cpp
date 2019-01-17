@@ -33,26 +33,37 @@ Texture::~Texture()
         glDeleteTextures(1, &Id);
 }
 
-void Texture::loadFromFile(const std::string& path)
+void Texture::loadFromFile(const std::string& path, TextureFlags flags)
 {
     int width, height, channels;
-    unsigned char* data = stbi_load(path.c_str(), 
-            &width, &height, &channels, 0);
+    unsigned char* data = stbi_load(path.c_str(),
+                                    &width, &height, &channels, 0);
     if(data == NULL)
         throw std::runtime_error("Failed to load texture " + path);
-    loadFromMemory(data, width, height, channels);
+    loadFromMemory(data, width, height, flags, channels);
     stbi_image_free(data);
 }
 
-void Texture::loadFromMemory(unsigned char* data, int width, int height, int channels, TextureFlags flags)
+void Texture::loadFromMemory(unsigned char* data, int width, int height, TextureFlags flags, int channels)
 {
     GLenum type = getType(channels);
     Width = width;
     Height = height;
     bind();
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);  
+    GLenum wrapMode = GL_REPEAT;
+    switch(flags)
+    {
+        case TextureFlags::MirroredRepeat:
+            wrapMode = GL_MIRRORED_REPEAT;
+            break;
+        default:
+            break;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, Id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
@@ -84,3 +95,4 @@ GLenum Texture::getType(int channels)
 
     throw std::runtime_error("Unsupported channel count");
 }
+

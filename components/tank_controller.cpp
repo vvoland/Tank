@@ -18,7 +18,7 @@ TankController::TankController(InputSystem& inputSystem, std::shared_ptr<Transfo
         TurnSpeed(0.25f),
         LeftTracksOffset(0.0f),
         RightTracksOffset(0.0f),
-        TracksSpeed(0.3f)
+        TracksSpeed(0.5f)
 {
 
 }
@@ -57,15 +57,18 @@ void TankController::move(ComponentPtr<Transform> transform, float dt, float eps
 
 
     float horizontal = 0.0f;
+    float turningSpeed = 0.5f;
     if(Input.isKeyDown('A'))
     {
         horizontal = -1.0f;
-        LeftTracksOffset += dt * TracksSpeed;
+        LeftTracksOffset += dt * TracksSpeed * turningSpeed;
+        RightTracksOffset -= dt * TracksSpeed * turningSpeed;
     }
     else if(Input.isKeyDown('D'))
     {
         horizontal = 1.0f;
-        RightTracksOffset += dt * TracksSpeed;
+        LeftTracksOffset -= dt * TracksSpeed * turningSpeed;
+        RightTracksOffset += dt * TracksSpeed * turningSpeed;
     }
     if(horizontal > eps || horizontal < eps)
     {

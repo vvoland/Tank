@@ -34,18 +34,20 @@ class TankApp : public App
     private:
         AppAssets Assets;
         DrawCallBuilder Builder;
-        std::shared_ptr<ShaderProgram> Shader;
+        std::shared_ptr<ShaderProgram> Shader, SkyboxShader;
 
         InputSystem Input;
 
         bool Wireframe = false;
         float Time = 0.0f;
+        float BoxRefractionCoeff = 1.0f;
 
         ComponentPtr<TankController> TankControl;
         ComponentPtr<FreeCameraMovement> CameraMovement;
         ComponentPtr<FreeCameraRotation> CameraRotation;
 
         std::shared_ptr<GameObject> TankBase, TankTower, TankLeftTrack, TankRightTrack, Grass;
+        std::shared_ptr<GameObject> RefractionBox, ReflectionBox;
         std::shared_ptr<Light> Sun;
         std::shared_ptr<Camera> Cam;
         std::vector<std::shared_ptr<GameObject>> GameObjects;
@@ -56,7 +58,8 @@ class TankApp : public App
 
         std::shared_ptr<GameObject> build3DObject(const std::string& name,
                            std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture,
-                           std::shared_ptr<GameObject> parent = nullptr);
+                           std::shared_ptr<GameObject> parent = nullptr,
+                           std::shared_ptr<ShaderProgram> shader = nullptr);
         void drawObjectAndChildren(GameObject* obj, const std::vector<std::shared_ptr<Light>>& lights);
 
         void setTankControl(bool tankControl) const;

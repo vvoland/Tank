@@ -13,9 +13,11 @@ class AppAssets
         void load(std::string prefix);
 
         std::shared_ptr<Texture> TankBaseTexture, TankTracksTexture, GrassTexture;
-        std::shared_ptr<Mesh> PlaneMesh;
+        std::shared_ptr<Texture> SkyboxTexture;
+        std::shared_ptr<Mesh> PlaneMesh, SkyboxMesh, CubeMesh;
         std::shared_ptr<Mesh> TankBaseMesh, TankTowerMesh, TankLeftTracksMesh, TankRightTracksMesh;
         std::shared_ptr<Shader> DefaultVs, DefaultFs;
+        std::shared_ptr<Shader> SkyboxVs, SkyboxFs;
 };
 
 

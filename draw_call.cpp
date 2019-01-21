@@ -5,6 +5,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include "shader_program.hpp"
 
 DrawCall::DrawCall()
 {

@@ -1,0 +1,12 @@
+#version 330
+
+uniform samplerCube in_Skybox;
+
+in vec3 vs_out_UV;
+
+out vec4 out_Color;
+
+void main()
+{
+    out_Color = texture(in_Skybox, vs_out_UV);
+}

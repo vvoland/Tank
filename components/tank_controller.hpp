@@ -16,12 +16,12 @@ class TankController : public Component
 
         float& speed();
         float& towerSpeed();
+        glm::quat TargetTowerRotation;
 
     private:
         InputSystem& Input;
         ComponentPtr<Transform> Tower;
         ComponentPtr<Renderer> LeftTracks, RightTracks;
-        glm::quat TargetTowerRotation;
         bool TargetInitialized;
         float Speed, TowerSpeed, TurnSpeed;
         float LeftTracksOffset, RightTracksOffset;

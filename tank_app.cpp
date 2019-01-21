@@ -19,22 +19,41 @@ void TankApp::onInit()
     Assets.load("../assets/");
     Shader = std::make_shared<ShaderProgram>();
     Shader->fromShaders({Assets.DefaultVs, Assets.DefaultFs});
+    SkyboxShader = std::make_shared<ShaderProgram>();
+    SkyboxShader->fromShaders({Assets.SkyboxVs, Assets.SkyboxFs});
 
     Cam = std::make_shared<Camera>();
     auto camObject = createGameObject("Camera");
     camObject->addComponent(Cam);
     auto camTransform = camObject->getComponent<Transform>();
 
+    auto skybox = build3DObject("Skybox", Assets.SkyboxMesh, Assets.SkyboxTexture, nullptr, SkyboxShader);
+    auto skyboxTransform = skybox->getComponent<Transform>();
+    skyboxTransform->Scale = glm::vec3(10000.0f);
+    skyboxTransform->markDirty();
 
     auto dirLightObject = createGameObject("Light");
-    Sun = std::make_shared<Light>(LightType::Point);
+    Sun = std::make_shared<Light>(LightType::Directional);
     Sun->range() = 50.0f;
     dirLightObject->addComponent(Sun);
-    dirLightObject->getComponent<Transform>()->translateLocal(glm::vec3(50, 3, 0));
+    dirLightObject->getComponent<Transform>()->translateLocal(glm::vec3(-10000, 10000, -5000));
 
     auto grassObject = createGameObject("Grass");
     auto grassRenderer = std::make_shared<Renderer>(Builder.build(Shader, Assets.PlaneMesh, Assets.GrassTexture));
     grassObject->addComponent(grassRenderer);
+//    grassRenderer->Call.material()->refraction() = 1.0f;
+//    grassRenderer->Call.material()->refractionCoefficient() = 1.309f;
+
+    RefractionBox = build3DObject("RefractionBox", Assets.CubeMesh, nullptr, nullptr);
+    RefractionBox->getComponent<Renderer>()->Call.material()->refraction() = 1.0f;
+    RefractionBox->getComponent<Renderer>()->Call.material()->refractionCoefficient() = BoxRefractionCoeff;
+    RefractionBox->getComponent<Transform>()->Scale = glm::vec3(5.0f);
+    RefractionBox->getComponent<Transform>()->translateLocal(glm::vec3(-15.0f, 2.0f, 10.0f));
+
+    ReflectionBox = build3DObject("ReflectionBox", Assets.CubeMesh, nullptr, nullptr);
+    ReflectionBox->getComponent<Renderer>()->Call.material()->reflection() = 1.0f;
+    ReflectionBox->getComponent<Transform>()->Scale = glm::vec3(5.0f);
+    ReflectionBox->getComponent<Transform>()->translateLocal(glm::vec3(15.0f, 5.0f, 10.0f));
 
     TankBase = createGameObject("Tank");
     auto baseRenderer = std::make_shared<Renderer>(Builder.build(Shader, Assets.TankBaseMesh, Assets.TankBaseTexture));
@@ -47,6 +66,9 @@ void TankApp::onInit()
     TankTower = build3DObject("Tower", Assets.TankTowerMesh, Assets.TankBaseTexture, TankBase);
     TankLeftTrack = build3DObject("LeftTrack", Assets.TankLeftTracksMesh, Assets.TankTracksTexture, TankBase);
     TankRightTrack = build3DObject("RightTrack", Assets.TankRightTracksMesh, Assets.TankTracksTexture, TankBase);
+
+    TankTower->getComponent<Renderer>()->Call.material()->reflection() = 0.1f;
+    TankBase->getComponent<Renderer>()->Call.material()->reflection() = 0.1f;
 
     TankControl = std::make_shared<TankController>(Input, TankTower->getComponent<Transform>(),
             TankLeftTrack->getComponent<Renderer>(), TankRightTrack->getComponent<Renderer>());
@@ -72,7 +94,7 @@ void TankApp::setTankControl(bool tankControl) const
     else
     {
         camTransform->Position = glm::vec3(0.0f, 4.5f, -4.5f);
-        camTransform->PreRotation = TankTower->getComponent<Transform>()->Rotation;
+        camTransform->PreRotation = TankControl->TargetTowerRotation;
         camTransform->Rotation = glm::quat(glm::radians(glm::vec3(150.0f, 0.0f, 180.0f)));
     }
     camTransform->markDirty();
@@ -85,13 +107,21 @@ void TankApp::setTankControl(bool tankControl) const
 }
 
 std::shared_ptr<GameObject> TankApp::build3DObject(const std::string& name,
-        std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture, std::shared_ptr<GameObject> parent)
+        std::shared_ptr<Mesh> mesh, std::shared_ptr<Texture> texture, std::shared_ptr<GameObject> parent,
+        std::shared_ptr<ShaderProgram> shader)
 {
     auto obj = createGameObject(name);
-    auto baseRenderer = std::make_shared<Renderer>(Builder.build(Shader, mesh, texture));
+    if(shader == nullptr)
+        shader = Shader;
+    auto drawCall = Builder.build(shader, mesh, texture);
+    drawCall.material()->setSkybox(Assets.SkyboxTexture);
+    auto baseRenderer = std::make_shared<Renderer>(drawCall);
     obj->addComponent(baseRenderer);
-    auto transform = obj->getComponent<Transform>();
-    transform->setParent(parent->getComponent<Transform>());
+    if(parent != nullptr)
+    {
+        auto transform = obj->getComponent<Transform>();
+        transform->setParent(parent->getComponent<Transform>());
+    }
 
     return obj;
 }
@@ -111,10 +141,10 @@ void TankApp::onGui()
 {
     ImGui::Begin("Controls");
 
-    auto camTransform = Cam->Owner->getComponent<Transform>();
-    ImGui::LabelText("Position", "%f %f %f", camTransform->Position.x, camTransform->Position.y, camTransform->Position.z);
-    auto rot = glm::degrees(glm::eulerAngles(camTransform->Rotation));
-    ImGui::LabelText("Rotation", "%f %f %f", rot.x, rot.y, rot.z);
+    if(ImGui::SliderFloat("Box refraction coefficient", &BoxRefractionCoeff, 1.0f, 2.0f))
+    {
+        RefractionBox->getComponent<Renderer>()->Call.material()->refractionCoefficient() = BoxRefractionCoeff;
+    }
     ImGui::Text("Press SPACE to toggle tank control");
     ImGui::End();
 }

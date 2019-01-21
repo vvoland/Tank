@@ -7,7 +7,7 @@
 FreeCameraMovement::FreeCameraMovement(const InputSystem& input)
         : Input(input)
 {
-    Speed = 50.0f;
+    Speed = 25.0f;
 }
 
 float& FreeCameraMovement::speed()

@@ -5,6 +5,7 @@
 #include <memory>
 #include <GL/glew.h>
 #include <vector>
+#include "texture.hpp"
 
 class Vao;
 class Material;

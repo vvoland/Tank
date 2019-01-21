@@ -9,7 +9,10 @@
 #include "light.hpp"
 
 Material::Material(std::shared_ptr<ShaderProgram> program, std::shared_ptr<Texture> texture)
-    : AmbientColor(0.05f, 0.05f, 0.05f)
+    : AmbientColor(0.05f, 0.05f, 0.05f),
+    Reflection(0.0f),
+    Refraction(0.0f),
+    RefractionCoeff(1.0f)
 {
     mProgram = std::move(program);
     mTexture = std::move(texture);
@@ -24,9 +27,17 @@ void Material::bind() const
         mTexture->bind(0);
         mProgram->setUniform("in_Texture", 0);
     }
+    if(mSkybox != nullptr)
+    {
+        mSkybox->bind(1);
+        mProgram->setUniform("in_Skybox", 1);
+    }
     mProgram->setUniform("in_Color", Color);
     mProgram->setUniform("in_AmbientColor", AmbientColor);
     mProgram->setUniform("in_UvSpeed", UvSpeed);
+    mProgram->setUniform("in_Refraction", Refraction);
+    mProgram->setUniform("in_Reflection", Reflection);
+    mProgram->setUniform("in_RefractionCoefficient", RefractionCoeff);
 }
 
 void Material::setMVP(const Mvp& mvp)
@@ -101,4 +112,29 @@ glm::vec3& Material::ambient()
 float& Material::uvSpeed()
 {
     return UvSpeed;
+}
+
+std::shared_ptr<ShaderProgram> Material::program()
+{
+    return mProgram;
+}
+
+void Material::setSkybox(std::shared_ptr<Texture> texture)
+{
+    mSkybox = std::move(texture);
+}
+
+float& Material::reflection()
+{
+    return Reflection;
+}
+
+float& Material::refraction()
+{
+    return Refraction;
+}
+
+float& Material::refractionCoefficient()
+{
+    return RefractionCoeff;
 }

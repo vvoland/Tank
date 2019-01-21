@@ -7,6 +7,7 @@ in vec3 vs_out_FragPos;
 in vec3 vs_out_ViewPos;
 
 uniform sampler2D in_Texture;
+uniform samplerCube in_Skybox;
 
 #define MAX_LIGHTS 4
 
@@ -27,6 +28,9 @@ uniform vec3 in_AmbientColor;
 uniform Light in_Light[MAX_LIGHTS];
 uniform int in_LightCount;
 uniform mat4 in_View;
+uniform float in_Reflection;
+uniform float in_Refraction;
+uniform float in_RefractionCoefficient;
 
 out vec4 out_Color;
 
@@ -93,7 +97,14 @@ void main()
     vec3 diffuse = color - ambient;
     vec3 specularColor = vec3(1, 1, 1) * 0.1;
     vec3 specular = specularColor * specularPower;
-
     vec3 finalColor = toGamma(ambient) + toGamma(diffuse + specular) * lightColor;
+
+    if(in_Reflection > 0.000001f)
+        finalColor += texture(in_Skybox, reflect(-viewDir, normal)).rgb * in_Reflection;
+    if(in_Refraction > 0.000001f)
+        finalColor += texture(in_Skybox, refract(-viewDir, normal, 1.0 / in_RefractionCoefficient)).rgb * in_Refraction;
+
+
+
     out_Color = vec4(finalColor, alpha);
 }

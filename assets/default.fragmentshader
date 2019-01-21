@@ -72,9 +72,10 @@ void main()
         else if(type == LIGHT_POINT)
         {
             float dist = length(lightVec);
+
             float power = 1.0 - min(1, dist / in_Light[i].Range);
 
-            lightColor += in_Light[i].Color * lambertian * power;
+            lightColor += in_Light[i].Color * power;
         }
         else if(type == LIGHT_REFLECTOR)
         {

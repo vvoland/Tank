@@ -1,12 +1,11 @@
 #pragma once
+#include <glm/fwd.hpp>
 
+#include <unordered_map>
 #include <utility>
-#include <vector>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <glm/glm.hpp>
 
 class MeshLoadingException : public std::runtime_error
 {

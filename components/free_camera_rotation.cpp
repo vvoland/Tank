@@ -1,8 +1,8 @@
-#include <utility>
-
-#include "free_camera_rotation.hpp"
 #include "camera.hpp"
+#include "free_camera_rotation.hpp"
 #include "gameobject.hpp"
+
+#include <utility>
 
 FreeCameraRotation::FreeCameraRotation(const InputSystem& input)
     :

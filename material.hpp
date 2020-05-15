@@ -1,9 +1,9 @@
 #pragma once
 #include "mvp.hpp"
 
+#include <glm/fwd.hpp>
+
 #include <memory>
-#include <glm/detail/type_mat.hpp>
-#include <glm/vec3.hpp>
 #include <vector>
 
 class Light;

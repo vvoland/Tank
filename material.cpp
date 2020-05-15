@@ -12,7 +12,8 @@ Material::Material(std::shared_ptr<ShaderProgram> program, std::shared_ptr<Textu
     : AmbientColor(0.05f, 0.05f, 0.05f),
     Reflection(0.0f),
     Refraction(0.0f),
-    RefractionCoeff(1.0f)
+    RefractionCoeff(1.0f),
+    UvSpeed(0.0f)
 {
     mProgram = std::move(program);
     mTexture = std::move(texture);

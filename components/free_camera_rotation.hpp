@@ -1,9 +1,8 @@
 #pragma once
-
-#include <systems/input_system.hpp>
-#include <glm/detail/type_mat.hpp>
-#include <glm/fwd.hpp>
 #include "component.hpp"
+#include "systems/input_system.hpp"
+
+#include <glm/fwd.hpp>
 
 class FreeCameraRotation : public Component
 {

@@ -1,14 +1,14 @@
 #pragma once
-
-#include <initializer_list>
-#include <glm/detail/type_mat.hpp>
-#include <string>
-#include <glm/vec3.hpp>
-#include <functional>
-#include <vector>
-#include <memory>
-
 #include "shader_uniforms.inl"
+
+#include <glm/fwd.hpp>
+
+#include <functional>
+#include <initializer_list>
+#include <memory>
+#include <string>
+#include <vector>
+
 
 class Shader;
 

@@ -5,6 +5,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
+Transform::Transform() : 
+    PreRotation(1.0f, 0.0f, 0.0f, 0.0f),
+    Position(glm::vec3(0.0f)),
+    Rotation(1.0f, 0.0f, 0.0f, 0.0f),
+    Scale(glm::vec3(1.0f)),
+    Dirty(true),
+    CachedWorldMatrix(1.0f)
+{
+}
+
+
 bool Transform::isDirty() const
 {
     return Dirty;
@@ -47,12 +58,6 @@ const std::vector<Transform*> Transform::children() const
 void Transform::addChild(Transform* transform)
 {
     Children.emplace_back(transform);
-}
-
-Transform::Transform()
-    : Dirty(true)
-{
-    Scale = glm::vec3(1.0f);
 }
 
 Transform::~Transform()

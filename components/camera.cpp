@@ -5,6 +5,7 @@
 
 Camera::Camera()
     :
+        CurrentRotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
         Initialized(false),
         Speed(20.0f)
 {

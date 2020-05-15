@@ -8,6 +8,7 @@
 TankController::TankController(InputSystem& inputSystem, std::shared_ptr<Transform> tower,
                                ComponentPtr<Renderer> leftTracks, ComponentPtr<Renderer> rightTracks)
     :
+        TargetTowerRotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
         Input(inputSystem),
         Tower(std::move(tower)),
         LeftTracks(std::move(leftTracks)),
@@ -96,7 +97,7 @@ void TankController::rotateTower(float dt, const float eps)
         delta *= dt;
 
         TargetTowerRotation = FreeCameraRotation::fpsRotate(TargetTowerRotation, glm::vec2(0.0f, delta.x));
-        Tower->Rotation = slerp(Tower->Rotation, TargetTowerRotation, glm::clamp(dt, 0.0f, 1.0f));
+        Tower->Rotation = glm::slerp(Tower->Rotation, TargetTowerRotation, glm::clamp(dt, 0.0f, 1.0f));
         Tower->markDirty();
     }
 }

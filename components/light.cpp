@@ -7,7 +7,8 @@ Light::Light(LightType type)
     :
     Component(),
     mType(type),
-    mColor(1.0f, 1.0f, 1.0f)
+    mColor(1.0f, 1.0f, 1.0f),
+    Range(1.0f)
 {
 }
 

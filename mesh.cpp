@@ -4,6 +4,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/mesh.h>
+#include <glm/glm.hpp>
 
 #include <algorithm>
 #include <string>
